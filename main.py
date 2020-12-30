@@ -19,7 +19,7 @@ def get_playlist(playlist_id):
 
 
 def get_album(album_id):
-    return spotify.album(album_id)['tracks']
+    return spotify.album(album_id)
 
 
 def queue_tracks(tracks):
@@ -27,6 +27,29 @@ def queue_tracks(tracks):
         spotify.add_to_queue(track['uri'])
         sleep(1)  # without this, tracks might be queued in wrong order.
         # Find better way to ensure correct order
+
+
+def get_random_album_from_playlist(playlist_id):
+    # 6hftFUuWJWWYHUATbia7Z1
+    items = get_playlist(playlist_id)
+    item = random.choice(items)
+    return item['track']['album']['id']
+
+
+def get_random_album_from_followed_artists():
+    artist_list = []
+    artists = spotify.current_user_followed_artists(limit=50)['artists']
+    artist_list.extend(artists['items'])
+    after = artists['cursors']['after']
+    while after:
+        artists = spotify.current_user_followed_artists(
+            limit=50, after=after)['artists']
+        artist_list.extend(artists['items'])
+        after = artists['cursors']['after']
+    picked_artist = random.choice(artist_list)
+    albums = spotify.artist_albums(
+        picked_artist['id'], album_type='album')
+    return random.choice(albums['items'])['id']
 
 
 if __name__ == '__main__':
@@ -41,35 +64,20 @@ if __name__ == '__main__':
 
     while True:
         if arguments.playlist:
-            # 6hftFUuWJWWYHUATbia7Z1
-            items = get_playlist(arguments.playlist)
-            item = random.choice(items)
-            album_id = item['track']['album']['id']
+            album_id = get_random_album_from_playlist(arguments.playlist)
         else:
-            artist_list = []
-            artists = spotify.current_user_followed_artists(limit=50)['artists']
-            artist_list.extend(artists['items'])
+            album_id = get_random_album_from_followed_artists()
 
-            after = artists['cursors']['after']
-            while after:
-                artists = spotify.current_user_followed_artists(
-                    limit=50, after=after)['artists']
-                artist_list.extend(artists['items'])
-                after = artists['cursors']['after']
-
-            picked_artist = random.choice(artist_list)
-            albums = spotify.artist_albums(
-                picked_artist['id'], album_type='album')
-            album_id = random.choice(albums['items'])['id']
-
-        tracks = get_album(album_id)
+        album = get_album(album_id)
+        print('Queuing album: {} by {}'.format(album['name'], album['artists'][0]['name']))
         try:
-            queue_tracks(tracks)
+            queue_tracks(album['tracks'])
         except spotipy.SpotifyException:
             print('No active device. Please start a device, then press enter')
             input()
-            queue_tracks(tracks)
+            queue_tracks(album['tracks'])
 
         duration = album_duration_seconds(album_id)
+        print('Waiting {} seconds for next queue'.format(duration))
         sleep(duration)
 
