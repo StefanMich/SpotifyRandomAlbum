@@ -2,6 +2,7 @@
 *.mo
 *.pyc
 *.log
+.env
 
 syntax: glob
 .idea/**

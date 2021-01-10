@@ -1,9 +1,12 @@
 import argparse
+from dotenv import load_dotenv
 import random
 from time import sleep
 
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
+
+load_dotenv()
 
 scope = 'user-library-read user-read-playback-state user-modify-playback-state user-follow-read'
 spotify = spotipy.Spotify(client_credentials_manager=SpotifyOAuth(scope=scope))

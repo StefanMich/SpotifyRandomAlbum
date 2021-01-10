@@ -10,6 +10,8 @@ chardet==4.0.0
     # via requests
 idna==2.10
     # via requests
+python-dotenv==0.15.0
+    # via -r requirements.in
 requests==2.25.1
     # via spotipy
 six==1.15.0
