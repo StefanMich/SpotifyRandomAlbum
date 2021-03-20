@@ -13,9 +13,8 @@ Example 'http://127.0.0.1:8001 '
     - SPOTIPY_CLIENT_ID - the client id from your spotify app
     - SPOTIPY_CLIENT_SECRET - the client secret from your spotify app
     - SPOTIPY_REDIRECT_URI - the redirect uri used in the previous step
-- Create a virtual environment 
-- Run pip3 install pip-tools 
-- Run pipsync requirements.txt
+- `pip install pipenv`
+- `pipenv shell`
 
 # Usage
-`python3 main.py`
+`pipenv run python main.py`

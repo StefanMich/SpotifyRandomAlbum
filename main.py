@@ -1,4 +1,7 @@
 import argparse
+import sys
+import threading
+
 from dotenv import load_dotenv
 import random
 from time import sleep
@@ -12,9 +15,9 @@ scope = 'user-library-read user-read-playback-state user-modify-playback-state u
 spotify = spotipy.Spotify(client_credentials_manager=SpotifyOAuth(scope=scope))
 
 
-def album_duration_seconds(album_id):
-    return sum(track['duration_ms'] for track in
-        spotify.album(album_id)['tracks']['items']) / 1000
+def album_duration_seconds(album):
+    total_ms = sum(track['duration_ms'] for track in album['tracks']['items'])
+    return total_ms / 1000
 
 
 def get_playlist(playlist_id):
@@ -25,8 +28,9 @@ def get_album(album_id):
     return spotify.album(album_id)
 
 
-def queue_tracks(tracks):
-    for track in tracks['items']:
+def queue_tracks(album):
+    print('Queueing {}'.format(album_description(album)))
+    for track in album['tracks']['items']:
         spotify.add_to_queue(track['uri'])
         sleep(1)  # without this, tracks might be queued in wrong order.
         # Find better way to ensure correct order
@@ -55,6 +59,68 @@ def get_random_album_from_followed_artists():
     return random.choice(albums['items'])['id']
 
 
+def album_description(album):
+    return '{} by {}'.format(album['name'], album['artists'][0]['name'])
+
+
+class Main:
+
+    def __init__(self):
+        self.queue_done = threading.Event()
+        self.next_album = None
+
+    def run(self):
+        print('SpotifyRandomAlbum!')
+        choice = ''
+        while choice.lower() != 'c':
+            self.get_next_album()
+            print('Queue album: {}'.format(album_description(self.next_album)))
+            choice = input('Continue (C) or Skip (S)?')
+
+        queuer = threading.Thread(target=self.queuer, daemon=True)
+        queuer.start()
+
+        self.queue_done.wait()
+        while True:
+            print("------------------")
+            print("S - Skip album")
+            print("X - Exit")
+            choice = input()
+            if choice.lower() == 's':
+                self.skip_album()
+            if choice.lower() == 'x':
+                break
+
+    def queuer(self):
+        while True:
+            try:
+                queue_tracks(self.next_album)
+            except spotipy.SpotifyException:
+                print(
+                    'No active device. Please start a device, then press '
+                    'enter')
+                input()
+                queue_tracks(self.next_album)
+
+            duration = album_duration_seconds(self.next_album)
+            self.get_next_album()
+            print('Waiting {} seconds to queue {}'.format(
+                duration, album_description(self.next_album)))
+            self.queue_done.set()
+            sleep(duration)
+
+    def get_next_album(self):
+        if arguments.playlist:
+            album_id = get_random_album_from_playlist(arguments.playlist)
+        else:
+            album_id = get_random_album_from_followed_artists()
+        self.next_album = get_album(album_id)
+
+    def skip_album(self):
+        self.get_next_album()
+        print('Next album: {}'.format(album_description(self.next_album)))
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='')
@@ -65,22 +131,7 @@ if __name__ == '__main__':
 
     arguments = parser.parse_args()
 
-    while True:
-        if arguments.playlist:
-            album_id = get_random_album_from_playlist(arguments.playlist)
-        else:
-            album_id = get_random_album_from_followed_artists()
-
-        album = get_album(album_id)
-        print('Queuing album: {} by {}'.format(album['name'], album['artists'][0]['name']))
-        try:
-            queue_tracks(album['tracks'])
-        except spotipy.SpotifyException:
-            print('No active device. Please start a device, then press enter')
-            input()
-            queue_tracks(album['tracks'])
-
-        duration = album_duration_seconds(album_id)
-        print('Waiting {} seconds for next queue'.format(duration))
-        sleep(duration)
-
+    try:
+        Main().run()
+    except KeyboardInterrupt:
+        sys.exit()
