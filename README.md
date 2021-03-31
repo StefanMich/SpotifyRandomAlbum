@@ -15,6 +15,7 @@ Example 'http://127.0.0.1:8001 '
     - SPOTIPY_REDIRECT_URI - the redirect uri used in the previous step
 - `pip install pipenv`
 - `pipenv shell`
+- `pipenv sync`
 
 # Usage
 `pipenv run python main.py`
