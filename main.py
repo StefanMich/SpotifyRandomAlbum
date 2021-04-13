@@ -69,10 +69,18 @@ class Main:
         self.queue_done = threading.Event()
         self.next_album = None
 
+    @property
+    def actions(self):
+        return {
+            'S': ('Skip Album', self.skip_album),
+            'C': ('Queue now', self.queue_now),
+            'X': ('Exit', self.exit),
+    }
+
     def run(self):
         print('SpotifyRandomAlbum!')
         choice = ''
-        while choice.lower() != 'c':
+        while choice.upper() != 'C':
             self.get_next_album()
             print('Queue album: {}'.format(album_description(self.next_album)))
             choice = input('Continue (C) or Skip (S)?')
@@ -83,13 +91,18 @@ class Main:
         self.queue_done.wait()
         while True:
             print("------------------")
-            print("S - Skip album")
-            print("X - Exit")
+            for key, (description, _) in self.actions.items():
+                print(f'{key} - {description}')
             choice = input()
-            if choice.lower() == 's':
-                self.skip_album()
-            if choice.lower() == 'x':
-                break
+
+            _, action = self.actions.get(choice.upper(), (None, None))
+            if action:
+                try:
+                    action()
+                except StopIteration:
+                    break
+            else:
+                print('Unknown action')
 
     def queuer(self):
         while True:
@@ -119,6 +132,13 @@ class Main:
     def skip_album(self):
         self.get_next_album()
         print('Next album: {}'.format(album_description(self.next_album)))
+
+    def queue_now(self):
+        print('Queuing now')
+        return
+
+    def exit(self):
+        raise StopIteration
 
 
 if __name__ == '__main__':
