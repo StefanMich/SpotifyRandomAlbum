@@ -53,9 +53,12 @@ def get_random_album_from_followed_artists():
             limit=50, after=after)['artists']
         artist_list.extend(artists['items'])
         after = artists['cursors']['after']
-    picked_artist = random.choice(artist_list)
-    albums = spotify.artist_albums(
-        picked_artist['id'], album_type='album')
+    while True:
+        picked_artist = random.choice(artist_list)
+        albums = spotify.artist_albums(
+            picked_artist['id'], album_type='album')
+        if albums['items']:
+            break
     return random.choice(albums['items'])['id']
 
 
