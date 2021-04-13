@@ -63,7 +63,7 @@ def get_random_album_from_followed_artists():
 
 
 def album_description(album):
-    return '{} by {}'.format(album['name'], album['artists'][0]['name'])
+    return '\'{}\' by \'{}\''.format(album['name'], album['artists'][0]['name'])
 
 
 class Main:
