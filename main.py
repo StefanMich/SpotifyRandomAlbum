@@ -70,6 +70,7 @@ class Main:
 
     def __init__(self):
         self.queue_done = threading.Event()
+        self.requeue = threading.Event()
         self.next_album = None
 
     @property
@@ -78,7 +79,7 @@ class Main:
             'S': ('Skip Album', self.skip_album),
             'C': ('Queue now', self.queue_now),
             'X': ('Exit', self.exit),
-    }
+        }
 
     def run(self):
         print('SpotifyRandomAlbum!')
@@ -109,6 +110,7 @@ class Main:
 
     def queuer(self):
         while True:
+            self.queue_done.clear()
             try:
                 queue_tracks(self.next_album)
             except spotipy.SpotifyException:
@@ -123,7 +125,8 @@ class Main:
             print('Waiting {} seconds to queue {}'.format(
                 duration, album_description(self.next_album)))
             self.queue_done.set()
-            sleep(duration)
+            self.requeue.wait(duration)
+            self.requeue.clear()
 
     def get_next_album(self):
         if arguments.playlist:
@@ -137,7 +140,9 @@ class Main:
         print('Next album: {}'.format(album_description(self.next_album)))
 
     def queue_now(self):
+        self.requeue.set()
         print('Queuing now')
+        self.queue_done.wait()
         return
 
     def exit(self):
