@@ -44,7 +44,17 @@ def get_random_album_from_playlist(playlist_id):
     return item['track']['album']['id']
 
 
-def get_random_album_from_followed_artists():
+def get_random_album(artists):
+    while True:
+        picked_artist = random.choice(artists)
+        albums = spotify.artist_albums(
+            picked_artist['id'], album_type='album')
+        if albums['items']:
+            break
+    return random.choice(albums['items'])['id']
+
+
+def followed_artists():
     artist_list = []
     artists = spotify.current_user_followed_artists(limit=50)['artists']
     artist_list.extend(artists['items'])
@@ -54,13 +64,7 @@ def get_random_album_from_followed_artists():
             limit=50, after=after)['artists']
         artist_list.extend(artists['items'])
         after = artists['cursors']['after']
-    while True:
-        picked_artist = random.choice(artist_list)
-        albums = spotify.artist_albums(
-            picked_artist['id'], album_type='album')
-        if albums['items']:
-            break
-    return random.choice(albums['items'])['id']
+    return artist_list
 
 
 def album_description(album):
@@ -75,9 +79,14 @@ class Main:
         self.next_album = None
 
     @property
+    def next_album_artist(self):
+        return self.next_album['artists'][0]
+
+    @property
     def actions(self):
         return {
             'S': ('Skip Album', self.skip_album),
+            'A': ('Random album from artist', self.next_album_from_artist),
             'C': ('Queue now', self.queue_now),
             'X': ('Exit', self.exit),
         }
@@ -86,7 +95,8 @@ class Main:
         print('SpotifyRandomAlbum!')
         choice = ''
         while choice.upper() != 'C':
-            self.get_next_album()
+            artist_list = followed_artists()
+            self.get_next_album(artist_list)
             print('Queue album: {}'.format(album_description(self.next_album)))
             choice = input('Continue (C) or Skip (S)?')
 
@@ -122,22 +132,28 @@ class Main:
                 queue_tracks(self.next_album)
 
             duration = album_duration_seconds(self.next_album)
-            self.get_next_album()
+            artist_list = followed_artists()
+            self.get_next_album(artist_list)
             print('Waiting {} seconds to queue {}'.format(
                 duration, album_description(self.next_album)))
             self.queue_done.set()
             self.requeue.wait(duration)
             self.requeue.clear()
 
-    def get_next_album(self):
+    def get_next_album(self, artist_list):
         if arguments.playlist:
             album_id = get_random_album_from_playlist(arguments.playlist)
         else:
-            album_id = get_random_album_from_followed_artists()
+            album_id = get_random_album(artist_list)
         self.next_album = get_album(album_id)
 
     def skip_album(self):
-        self.get_next_album()
+        artist_list = followed_artists()
+        self.get_next_album(artist_list)
+        print('Next album: {}'.format(album_description(self.next_album)))
+
+    def next_album_from_artist(self):
+        self.get_next_album([self.next_album_artist])
         print('Next album: {}'.format(album_description(self.next_album)))
 
     def queue_now(self):
