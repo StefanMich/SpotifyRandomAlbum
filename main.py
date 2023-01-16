@@ -30,7 +30,7 @@ def get_album(album_id):
 
 
 def queue_tracks(album):
-    print('Queueing {}'.format(album_description(album)))
+    print(f'Queueing {album_description(album)}\n')
     for track in album['tracks']['items']:
         spotify.add_to_queue(track['uri'])
         sleep(1)  # without this, tracks might be queued in wrong order.
@@ -68,16 +68,12 @@ def followed_artists():
 
 
 def album_description(album):
-    return '\'{}\' by \'{}\''.format(album['name'], album['artists'][0]['name'])
+    name = album["name"]
+    album = album["artists"][0]["name"]
+    return f"'{name}' by '{album}'"
 
 
 class Main:
-
-    def __init__(self):
-        self.queue_done = threading.Event()
-        self.requeue = threading.Event()
-        self.next_album = None
-
     @property
     def next_album_artist(self):
         return self.next_album['artists'][0]
@@ -93,21 +89,13 @@ class Main:
 
     def run(self):
         print('SpotifyRandomAlbum!')
-        choice = ''
-        while choice.upper() != 'C':
-            artist_list = followed_artists()
-            self.get_next_album(artist_list)
-            print('Queue album: {}'.format(album_description(self.next_album)))
-            choice = input('Continue (C) or Skip (S)?')
 
-        queuer = threading.Thread(target=self.queuer, daemon=True)
-        queuer.start()
-
-        self.queue_done.wait()
+        self.skip_album()
         while True:
             print("------------------")
             for key, (description, _) in self.actions.items():
                 print(f'{key} - {description}')
+            print("------------------")
             choice = input()
 
             _, action = self.actions.get(choice.upper(), (None, None))
@@ -120,25 +108,15 @@ class Main:
                 print('Unknown action')
 
     def queuer(self):
-        while True:
-            self.queue_done.clear()
-            try:
-                queue_tracks(self.next_album)
-            except spotipy.SpotifyException:
-                print(
-                    'No active device. Please start a device, then press '
-                    'enter')
-                input()
-                queue_tracks(self.next_album)
-
-            duration = album_duration_seconds(self.next_album)
-            artist_list = followed_artists()
-            self.get_next_album(artist_list)
-            print('Waiting {} seconds to queue {}'.format(
-                duration, album_description(self.next_album)))
-            self.queue_done.set()
-            self.requeue.wait(duration)
-            self.requeue.clear()
+        try:
+            queue_tracks(self.next_album)
+        except spotipy.SpotifyException:
+            print(
+                'No active device. Please start a device, then press '
+                'enter')
+            input()
+            queue_tracks(self.next_album)
+        self.skip_album()
 
     def get_next_album(self, artist_list):
         if arguments.playlist:
@@ -150,17 +128,17 @@ class Main:
     def skip_album(self):
         artist_list = followed_artists()
         self.get_next_album(artist_list)
-        print('Next album: {}'.format(album_description(self.next_album)))
+        self.print_album()
+
+    def print_album(self):
+        print(f'Next album: {album_description(self.next_album)}')
 
     def next_album_from_artist(self):
         self.get_next_album([self.next_album_artist])
-        print('Next album: {}'.format(album_description(self.next_album)))
+        self.print_album()
 
     def queue_now(self):
-        self.requeue.set()
-        print('Queuing now')
-        self.queue_done.wait()
-        return
+        self.queuer()
 
     def exit(self):
         raise StopIteration
