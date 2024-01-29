@@ -1,0 +1,9 @@
+<html>
+  <head><title>Htmx Demo!</title></head>
+  <body
+    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+    >
+    {% block main %}{% endblock %}
+    <script src="https://unpkg.com/htmx.org@1.1.0"></script>
+  </body>
+</html>
