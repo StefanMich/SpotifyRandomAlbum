@@ -14,3 +14,15 @@ def delete_task(request, id):
     Task.objects.filter(id=id).delete()
     tasks = Task.objects.all()
     return render(request, 'tasks_list.html', {'tasks': tasks})
+
+
+@require_http_methods(['POST'])
+def create_task(request):
+    t = Task(
+        title=request.POST['title'],
+        description=request.POST['description'],
+    )
+    t.clean()
+    t.save()
+    tasks = Task.objects.all()
+    return render(request, 'tasks_list.html', {'tasks': tasks})
