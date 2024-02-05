@@ -5,13 +5,16 @@
 <div id="task_list" class="grid-container">
   {% for task in tasks %}
     <div class="task grid-item" >
-        <h2>{{ task.id }} - {{ task.title }}</h2>
-        <p>{{ task.description }}</p>
-      <a class="block mr-2 hover:text-gray-600"
-        hx-delete="{% url 'delete_task' task.id %}"
-        hx-confirm="Are you sure you want to delete this task?">
-        Delete?
-      </a>
+        <h4>{{ task.id }} - {{ task.title }}</h4>
+        <p>
+            {{ task.description }}
+        </p>
+    <a class="delete_icon"
+            hx-delete="{% url 'delete_task' task.id %}"
+            hx-confirm="Are you sure you want to delete this task?">
+            Delete?
+        </a>
+
     </div>
   {% endfor %}
 </div>
@@ -35,10 +38,30 @@
 }
 
 .grid-item {
-  background-color: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(0, 0, 0, 0.8);
-  padding: 10px;
-  font-size: 12px;
-  text-align: left;
+    background-color: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(0, 0, 0, 0.8);
+    padding: 5px;
+    font-size: 12px;
+    text-align: left;
+    position: relative;
+
 }
+
+h4 {
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+
+p {
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+
+.delete_icon {
+    position: absolute;
+    top: 9px;
+    right: 4px;
+}
+
+
 </style>
