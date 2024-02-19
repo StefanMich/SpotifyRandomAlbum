@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
 
+from main import get_album_list
 from .models import Task
 
 
@@ -13,19 +14,20 @@ def display_tasks(request):
 
 @dataclass
 class Album:
-    id: int
+    artist: str
     title: str
     url: str
 
 
 def display_albums(request):
-    test = "https://upload.wikimedia.org/wikipedia/en/8/83/Slayer_-_Show_No_Mercy.jpg"
-    albums = [
-        Album(1, 'Album 1', test),
-        Album(2, 'Album 2', test),
-        Album(3, 'Album 3', test),
-    ]
-    return render(request, 'display_albums.html', {'albums': albums})
+    albums = get_album_list()
+
+    view_albums = []
+    for album in albums['items']:
+        view_albums.append(Album(artist=album['artists'][0]['name'], title=album['name'], url=album['images'][0]['url']))
+    return render(request, 'display_albums.html', {'albums': view_albums})
+
+
 
 @require_http_methods(['DELETE'])
 def delete_task(request, id):

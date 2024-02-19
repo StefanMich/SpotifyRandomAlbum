@@ -54,6 +54,14 @@ def get_random_album(artists):
     return random.choice(albums['items'])['id']
 
 
+def get_album_list():
+    artist_list = followed_artists()
+    picked_artist = random.choice(artist_list)
+    albums = spotify.artist_albums(
+        picked_artist['id'], album_type='album')
+    return albums
+
+
 def followed_artists():
     artist_list = []
     artists = spotify.current_user_followed_artists(limit=50)['artists']
@@ -124,6 +132,7 @@ class Main:
         else:
             album_id = get_random_album(artist_list)
         self.next_album = get_album(album_id)
+        return self.next_album
 
     def skip_album(self):
         artist_list = followed_artists()
