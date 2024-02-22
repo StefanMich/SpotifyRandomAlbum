@@ -5,8 +5,7 @@ name = "pypi"
 
 [packages]
 python-dotenv = "==0.15.0"
-spotipy = "==2.16.1"
-console-menu = "==0.6.0"
+spotipy = "~=2.23"
 django = "==5.0.1"
 
 [dev-packages]
