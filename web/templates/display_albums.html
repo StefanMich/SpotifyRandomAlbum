@@ -1,6 +1,9 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block main %}
     <h1>Tasks</h1>
     {% include "album_rotator.html" %}
+
+<img src="{% static 'web/spotify_logos/01_RGB/02_PNG/Spotify_Logo_RGB_Green.png' %}" alt="spotify_logo" width="100">
 {% endblock %}
