@@ -59,7 +59,7 @@ def get_random_artist_album_list():
     picked_artist = random.choice(artist_list)
     albums = spotify.artist_albums(
         picked_artist['id'], album_type='album')
-    return albums
+    return picked_artist, albums
 
 
 def followed_artists():

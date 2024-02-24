@@ -37,10 +37,12 @@ class Album:
 
 
 def display_albums(request):
-    albums = get_random_artist_album_list()
+    artist, albums = get_random_artist_album_list()
     view_albums = Album.from_album_list(albums)
 
-    return render(request, 'display_albums.html', {'albums': view_albums})
+    artist_name = artist['name']
+
+    return render(request, 'display_albums.html', {'albums': view_albums, 'artist':artist_name})
 
 
 @require_http_methods(['DELETE'])
@@ -67,7 +69,7 @@ def queue_album(request, album_id):
     album = get_album(album_id)
     queue_tracks(album)
 
-    albums = get_random_artist_album_list()
+    _, albums = get_random_artist_album_list()
     view_albums = Album.from_album_list(albums)
 
     return render(request, 'album_rotator.html', {'albums': view_albums})
