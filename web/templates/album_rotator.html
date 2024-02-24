@@ -1,3 +1,4 @@
+{% load static %}
 <div id="albums"
   hx-target="#albums"
   hx-swap="outerHTML">
@@ -10,7 +11,10 @@
             <img src="{{ album.album_art_url }}" alt="{{album.title}} cover art" width="300" height="300">
         </p>
         <a>
-            <button hx-post="{% url 'queue_album' album.id %}">Queue album</button>
+            <button hx-post="{% url 'queue_album' album.id %}">
+                Queue album
+                <img id="#spinner" class="htmx-indicator" src="{% static 'web/bars.svg' %}" alt="Queuing">
+            </button>
         </a>
 
     </div>
