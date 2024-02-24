@@ -7,10 +7,10 @@
     <div class="task grid-item" >
         <h2>{{ album.title }} </h2>
         <p>
-            <img src="{{ album.url }}" alt="{{album.title}} cover art" width="300" height="300">
+            <img src="{{ album.album_art_url }}" alt="{{album.title}} cover art" width="300" height="300">
         </p>
         <a>
-            Queue album
+            <button hx-post="{% url 'queue_album' album.id %}">Queue album</button>
         </a>
 
     </div>
@@ -22,7 +22,6 @@
 {#<button hx-post="{% url 'random_artist' %}">Random Artist</button>#}
 </div>
 
-<!-- {% for i in albums %} auto {% endfor %} -->
 <style>
 .grid-container {
   display: grid;

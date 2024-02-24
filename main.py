@@ -54,7 +54,7 @@ def get_random_album(artists):
     return random.choice(albums['items'])['id']
 
 
-def get_album_list():
+def get_random_artist_album_list():
     artist_list = followed_artists()
     picked_artist = random.choice(artist_list)
     albums = spotify.artist_albums(

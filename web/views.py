@@ -3,7 +3,11 @@ from dataclasses import dataclass
 from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
 
-from main import get_album_list
+from main import (
+    get_album,
+    get_random_artist_album_list,
+    queue_tracks,
+)
 from .models import Task
 
 
@@ -14,19 +18,29 @@ def display_tasks(request):
 
 @dataclass
 class Album:
+    id: str
     artist: str
     title: str
-    url: str
+    album_art_url: str
+
+    @staticmethod
+    def from_album_list(album_list):
+        view_albums = []
+        for album in album_list['items']:
+            view_albums.append(Album(
+                id=album['id'],
+                artist=album['artists'][0]['name'],
+                title=album['name'],
+                album_art_url=album['images'][0]['url']
+            ))
+        return view_albums
 
 
 def display_albums(request):
-    albums = get_album_list()
+    albums = get_random_artist_album_list()
+    view_albums = Album.from_album_list(albums)
 
-    view_albums = []
-    for album in albums['items']:
-        view_albums.append(Album(artist=album['artists'][0]['name'], title=album['name'], url=album['images'][0]['url']))
     return render(request, 'display_albums.html', {'albums': view_albums})
-
 
 
 @require_http_methods(['DELETE'])
@@ -46,3 +60,14 @@ def create_task(request):
     t.save()
     tasks = Task.objects.all()
     return render(request, 'tasks_list.html', {'tasks': tasks})
+
+
+@require_http_methods(['POST'])
+def queue_album(request, album_id):
+    album = get_album(album_id)
+    queue_tracks(album)
+
+    albums = get_random_artist_album_list()
+    view_albums = Album.from_album_list(albums)
+
+    return render(request, 'album_rotator.html', {'albums': view_albums})
