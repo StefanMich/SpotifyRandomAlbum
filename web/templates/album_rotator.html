@@ -1,9 +1,9 @@
 {% load static %}
-<h1>{{ artist }}</h1>
 <div id="albums"
   hx-target="#albums"
   hx-swap="outerHTML">
 
+<h1>{{ artist }}</h1>
 <div id="album_list" class="grid-container">
   {% for album in albums %}
     <div class="task grid-item" >
