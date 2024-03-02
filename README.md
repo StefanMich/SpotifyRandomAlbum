@@ -13,9 +13,9 @@ Example 'http://127.0.0.1:8001 '
     - SPOTIPY_CLIENT_ID - the client id from your spotify app
     - SPOTIPY_CLIENT_SECRET - the client secret from your spotify app
     - SPOTIPY_REDIRECT_URI - the redirect uri used in the previous step
-- `pip install pipenv`
-- `pipenv shell`
-- `pipenv sync`
 
 # Usage
-`pipenv run python main.py`
+Start the app with docker compose, specifying what frontend you want, `web` or
+`terminal`
+
+`docker compose up <mode>`
