@@ -10,6 +10,8 @@ from time import sleep
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 
+from exception_parser import parse_exception
+
 load_dotenv()
 
 scope = 'user-library-read user-read-playback-state user-modify-playback-state user-follow-read'
@@ -32,7 +34,10 @@ def get_album(album_id):
 def queue_tracks(album):
     print(f'Queueing {album_description(album)}\n')
     for track in album['tracks']['items']:
-        spotify.add_to_queue(track['uri'])
+        try:
+            spotify.add_to_queue(track['uri'])
+        except Exception as e:
+            raise parse_exception(e)
         sleep(1)  # without this, tracks might be queued in wrong order.
         # Find better way to ensure correct order
 

@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
 
+from exception_parser import SpotifyException
 from main import (
     get_album,
     get_random_artist_album_list,
@@ -68,11 +69,15 @@ def create_task(request):
 @require_http_methods(['POST'])
 def queue_album(request, album_id):
     album = get_album(album_id)
-    queue_tracks(album)
+    error = None
+    try:
+        queue_tracks(album)
+    except SpotifyException as e:
+        error = e.args[0]
 
     artist, albums = get_random_artist_album_list()
     artist_name = artist['name']
     view_albums = Album.from_album_list(albums)
 
     return render(request, 'album_rotator.html', {
-        'albums': view_albums, 'artist': artist_name})
+        'albums': view_albums, 'artist': artist_name, 'error': error})
