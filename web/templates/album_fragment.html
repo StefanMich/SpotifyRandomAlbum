@@ -1,0 +1,13 @@
+{% load static %}
+<div class="task grid-item" >
+        <h3>{{ album.title }} </h3>
+        <p>
+            <img src="{{ album.album_art_url }}" alt="{{album.title}} cover art" width={{ dimension }} height={{ dimension }} style="padding:10px">
+        </p>
+        <a>
+            <button hx-post="{% url 'queue_album' album.id %}">
+                Queue album
+                <img id="#spinner" class="htmx-indicator" src="{% static 'web/bars.svg' %}" alt="Queuing">
+            </button>
+        </a>
+</div>

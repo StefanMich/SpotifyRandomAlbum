@@ -6,23 +6,15 @@
 <div id="error" class="error {% if not error %} dont-display {% endif %}  if error " >
     {{ error }}
 </div>
-<h1>{{ artist }}</h1>
+<h1 style="text-align: center">{{ artist }}</h1>
+
+<div class="grid-container">
+    {% include "album_fragment.html" with album=spotlight_album dimension=300%}
+</div>
+
 <div id="album_list" class="grid-container">
-
-  {% for album in albums %}
-    <div class="task grid-item" >
-        <h2>{{ album.title }} </h2>
-        <p>
-            <img src="{{ album.album_art_url }}" alt="{{album.title}} cover art" width="300" height="300">
-        </p>
-        <a>
-            <button hx-post="{% url 'queue_album' album.id %}">
-                Queue album
-                <img id="#spinner" class="htmx-indicator" src="{% static 'web/bars.svg' %}" alt="Queuing">
-            </button>
-        </a>
-
-    </div>
+  {% for album in other_albums %}
+        {% include "album_fragment.html" with album=album dimension=200 %}
   {% endfor %}
 </div>
 
@@ -34,13 +26,14 @@
 <style>
 .grid-container {
   display: grid;
-  grid-template-columns: auto auto auto auto auto auto;
-  background-color: #2196F3;
+  grid-template-columns: auto auto auto auto auto auto auto;
   padding: 10px;
+  margin: auto;
+  max-width: fit-content;
 }
 
 .grid-item {
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: #d3eafd;
     border: 1px solid rgba(0, 0, 0, 0.8);
     padding: 5px;
     font-size: 12px;

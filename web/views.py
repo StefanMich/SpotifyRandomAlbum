@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import random
 
 from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
@@ -38,13 +39,22 @@ class Album:
 
 
 def display_albums(request):
-    artist, albums = get_random_artist_album_list()
-    view_albums = Album.from_album_list(albums)
-
-    artist_name = artist['name']
+    artist_name, other_albums, spotlight_album = prepare_albums()
 
     return render(request, 'display_albums.html', {
-        'albums': view_albums, 'artist': artist_name})
+        'spotlight_album': spotlight_album,
+        'other_albums': other_albums,
+        'artist': artist_name,
+    })
+
+
+def prepare_albums():
+    artist, albums = get_random_artist_album_list()
+    view_albums = Album.from_album_list(albums)
+    spotlight_album = random.choice(view_albums)
+    other_albums = [album for album in view_albums if album.id != spotlight_album.id]
+    artist_name = artist['name']
+    return artist_name, other_albums, spotlight_album
 
 
 @require_http_methods(['DELETE'])
@@ -75,9 +85,11 @@ def queue_album(request, album_id):
     except SpotifyException as e:
         error = e.args[0]
 
-    artist, albums = get_random_artist_album_list()
-    artist_name = artist['name']
-    view_albums = Album.from_album_list(albums)
+    artist_name, other_albums, spotlight_album = prepare_albums()
 
     return render(request, 'album_rotator.html', {
-        'albums': view_albums, 'artist': artist_name, 'error': error})
+        'spotlight_album': spotlight_album,
+        'other_albums': other_albums,
+        'artist': artist_name,
+        'error': error,
+    })
