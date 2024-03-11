@@ -63,8 +63,14 @@ def get_random_artist_album_list():
     artist_list = followed_artists()
     picked_artist = random.choice(artist_list)
     albums = spotify.artist_albums(
-        picked_artist['id'], album_type='album')
+        picked_artist['id'], album_type='album')['items']
     return picked_artist, albums
+
+
+def get_saved_albums(albums):
+    saved = spotify.current_user_saved_albums_contains(
+        [album['id'] for album in albums])
+    return saved
 
 
 def followed_artists():

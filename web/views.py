@@ -8,6 +8,7 @@ from exception_parser import SpotifyException
 from main import (
     get_album,
     get_random_artist_album_list,
+    get_saved_albums,
     queue_tracks,
 )
 from .models import Task
@@ -28,7 +29,7 @@ class Album:
     @staticmethod
     def from_album_list(album_list):
         view_albums = []
-        for album in album_list['items']:
+        for album in album_list:
             view_albums.append(Album(
                 id=album['id'],
                 artist=album['artists'][0]['name'],
@@ -50,8 +51,11 @@ def display_albums(request):
 
 def prepare_albums():
     artist, albums = get_random_artist_album_list()
+    saved = get_saved_albums(albums)
+    weights = [3 if is_saved else 1 for is_saved in saved]
+
     view_albums = Album.from_album_list(albums)
-    spotlight_album = random.choice(view_albums)
+    spotlight_album = random.choices(view_albums, weights=weights)[0]
     other_albums = [album for album in view_albums if album.id != spotlight_album.id]
     artist_name = artist['name']
     return artist_name, other_albums, spotlight_album
