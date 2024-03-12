@@ -42,11 +42,17 @@ def queue_tracks(album):
         # Find better way to ensure correct order
 
 
-def get_random_album_from_playlist(playlist_id):
-    # 6hftFUuWJWWYHUATbia7Z1
+def get_random_album_from_playlist(playlist_id) -> tuple[str, dict, list[dict]]:
     items = get_playlist(playlist_id)
-    item = random.choice(items)
-    return item['track']['album']['id']
+
+    albums = {
+        item['track']['album']['id']: item['track']['album']
+        for item in items
+    }
+    album = random.sample(list(albums.values()), k=8)
+    picked_album = album[0]
+    other_albums = album[1:]
+    return picked_album['artists'][0]['name'], picked_album, other_albums
 
 
 def get_random_album(artists):
@@ -139,7 +145,8 @@ class Main:
 
     def get_next_album(self, artist_list):
         if arguments.playlist:
-            album_id = get_random_album_from_playlist(arguments.playlist)
+            _, album, _ = get_random_album_from_playlist(arguments.playlist)
+            album_id = album['id']
         else:
             album_id = get_random_album(artist_list)
         self.next_album = get_album(album_id)
