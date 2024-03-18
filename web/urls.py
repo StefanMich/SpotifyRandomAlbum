@@ -11,6 +11,7 @@ from .views import (
 
 urlpatterns = [
     path('tasks/', display_tasks, name='display_tasks'),
+    path('', display_albums, name='display_albums'),
     path('albums/', display_albums, name='display_albums'),
     path(
         'playlist_albums/<str:playlist_id>',
