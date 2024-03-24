@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from enum import Enum
 import random
 
 from django.shortcuts import render
@@ -52,10 +53,11 @@ def display_albums(request):
         'spotlight_album': spotlight_album,
         'other_albums': other_albums,
         'artist': artist_name,
+        'mode': 'album',
     })
 
 
-def prepare_albums():
+def prepare_albums(unused=None):
     artist, albums = get_random_artist_album_list()
     saved = get_saved_albums(albums)
     weights = [3 if is_saved else 1 for is_saved in saved]
@@ -69,19 +71,36 @@ def prepare_albums():
 
 @require_http_methods(['GET'])
 def display_from_playlist(request, playlist_id):
-    artist_name, spotlight_album, other_albums = prepare_from_playlist(
+    artist_name, other_albums, spotlight_album = prepare_from_playlist(
         playlist_id)
 
     return render(request, 'display_albums.html', {
         'spotlight_album': spotlight_album,
         'other_albums': other_albums,
         'artist': artist_name,
+        'mode': 'playlist',
+        'playlist_id': playlist_id,
     })
 
 
 def prepare_from_playlist(playlist_id):
     artist_name, album, other = get_random_album_from_playlist(playlist_id)
-    return artist_name, Album.from_spotify_album(album), Album.from_album_list(other)
+    return artist_name, Album.from_album_list(other), Album.from_spotify_album(album)
+
+
+class Mode(Enum):
+    ALBUM = 'album', prepare_albums
+    PLAYLIST = 'playlist', prepare_from_playlist
+
+    def __new__(cls, identifier, func):
+        obj = object.__new__(cls)
+        obj._value_ = identifier
+        obj.func = func
+        return obj
+
+    def __init__(self, identifier, func):
+        self.identifier = self.name
+        self.func = func
 
 
 @require_http_methods(['DELETE'])
@@ -105,18 +124,23 @@ def create_task(request):
 
 @require_http_methods(['POST'])
 def queue_album(request, album_id):
+    mode = request.POST.get('mode')
+    playlist_id = request.POST.get('playlist_id', None)
     album = get_album(album_id)
     error = None
     try:
         queue_tracks(album)
     except SpotifyException as e:
         error = e.args[0]
+    mode_func = Mode(mode).func
 
-    artist_name, other_albums, spotlight_album = prepare_albums()
+    artist_name, other_albums, spotlight_album = mode_func(playlist_id)
 
     return render(request, 'album_rotator.html', {
         'spotlight_album': spotlight_album,
         'other_albums': other_albums,
         'artist': artist_name,
         'error': error,
+        'mode': mode,
+        'playlist_id': playlist_id,
     })
