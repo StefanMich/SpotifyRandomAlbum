@@ -4,7 +4,6 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-python-dotenv = "==0.15.0"
 spotipy = "~=2.23"
 django = "==5.0.1"
 

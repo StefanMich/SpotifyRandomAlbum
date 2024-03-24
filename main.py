@@ -3,7 +3,6 @@ import argparse
 import sys
 import threading
 
-from dotenv import load_dotenv
 import random
 from time import sleep
 
@@ -12,7 +11,6 @@ from spotipy.oauth2 import SpotifyOAuth
 
 from exception_parser import parse_exception
 
-load_dotenv()
 
 scope = 'user-library-read user-read-playback-state user-modify-playback-state user-follow-read'
 spotify = spotipy.Spotify(client_credentials_manager=SpotifyOAuth(scope=scope))
