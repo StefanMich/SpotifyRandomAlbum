@@ -79,6 +79,18 @@ def get_saved_albums(albums):
     return saved
 
 
+def followed_playlists():
+    playlist_list = []
+    playlists = spotify.current_user_playlists(limit=50)
+    playlist_list.extend(playlists['items'])
+    _next = playlists['next']
+    while _next:
+        playlists = spotify.next(playlists)
+        playlist_list.extend(playlists['items'])
+        _next = playlists
+    return playlists
+
+
 def followed_artists():
     artist_list = []
     artists = spotify.current_user_followed_artists(limit=50)['artists']
