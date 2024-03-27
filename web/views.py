@@ -7,6 +7,7 @@ from django.views.decorators.http import require_http_methods
 
 from exception_parser import SpotifyException
 from main import (
+    followed_playlists,
     get_album,
     get_random_album_from_playlist,
     get_random_artist_album_list,
@@ -144,3 +145,20 @@ def queue_album(request, album_id):
         'mode': mode,
         'playlist_id': playlist_id,
     })
+
+
+@dataclass
+class Playlist:
+    id: str
+    title: str
+    album_art_url: str
+
+
+def display_playlists(request):
+    playlists = followed_playlists()
+    playlists = [Playlist(
+        id=playlist['id'],
+        title=playlist['name'],
+        album_art_url=playlist['images'][0]['url'],
+    ) for playlist in playlists['items']]
+    return render(request, 'display_playlists.html', {'playlists': playlists})

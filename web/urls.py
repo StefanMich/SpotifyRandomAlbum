@@ -5,6 +5,7 @@ from .views import (
     create_task,
     display_albums,
     display_from_playlist,
+    display_playlists,
     display_tasks,
     queue_album,
 )
@@ -13,6 +14,7 @@ urlpatterns = [
     path('tasks/', display_tasks, name='display_tasks'),
     path('', display_albums, name='display_albums'),
     path('albums/', display_albums, name='display_albums'),
+    path('playlists/', display_playlists, name='display_playlists'),
     path(
         'playlist_albums/<str:playlist_id>',
         display_from_playlist,

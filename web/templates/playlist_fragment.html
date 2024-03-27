@@ -1,0 +1,11 @@
+{% load static %}
+<div class="task grid-item" id="t">
+        <h3>{{ playlist.title }} </h3>
+        <p>
+            <img src="{{ playlist.album_art_url }}" alt="{{playlist.title}} cover art" width=200 height=200 style="padding:10px">
+        </p>
+        <button hx-get="{% url 'display_playlist_albums' playlist.id %}" hx-push-url="true">
+            Random album from playlist
+
+        </button>
+</div>
