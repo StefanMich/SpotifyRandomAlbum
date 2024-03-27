@@ -1,7 +1,12 @@
+{% load static %}
 <html>
   <head><title>Spotify Random Album Selector</title></head>
   <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
     {% block main %}{% endblock %}
     <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.11/dist/ext/debug.js"></script>
+  
+  <img src="{% static 'web/spotify_logos/01_RGB/02_PNG/Spotify_Logo_RGB_Green.png' %}" alt="spotify_logo" width="100">
   </body>
 </html>
+    
