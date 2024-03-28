@@ -7,9 +7,9 @@ from main import (
     followed_artists,
     get_album,
     get_random_album,
-    get_random_album_from_playlist,
     queue_tracks,
 )
+from spotify_logic.playlist import get_random_album_from_playlist
 
 
 class Main:

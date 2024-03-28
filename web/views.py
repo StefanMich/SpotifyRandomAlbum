@@ -7,12 +7,14 @@ from django.views.decorators.http import require_http_methods
 
 from exception_parser import SpotifyException
 from main import (
-    followed_playlists,
     get_album,
-    get_random_album_from_playlist,
     get_random_artist_album_list,
     get_saved_albums,
     queue_tracks,
+)
+from spotify_logic.playlist import (
+    followed_playlists,
+    get_random_album_from_playlist,
 )
 
 
