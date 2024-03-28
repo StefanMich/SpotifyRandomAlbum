@@ -11,11 +11,6 @@ scope = 'user-library-read user-read-playback-state user-modify-playback-state u
 spotify = spotipy.Spotify(client_credentials_manager=SpotifyOAuth(scope=scope))
 
 
-def album_duration_seconds(album):
-    total_ms = sum(track['duration_ms'] for track in album['tracks']['items'])
-    return total_ms / 1000
-
-
 def get_album(album_id):
     return spotify.album(album_id)
 
