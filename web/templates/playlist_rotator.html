@@ -1,0 +1,59 @@
+<div id="playlists"
+  hx-target="#playlists"
+  hx-swap="outerHTML">
+
+<h1 style="text-align: center">Playlists</h1>
+
+<div id="playlist_list" class="grid-container">
+  {% for playlist in playlists %}
+        {% include "playlist_fragment.html" with playlist=playlist %}
+  {% endfor %}
+</div>
+
+<hr>
+</div>
+
+<style>
+.grid-container {
+  display: grid;
+  grid-template-columns: auto auto auto auto auto auto auto;
+  padding: 10px;
+  margin: auto;
+  max-width: fit-content;
+}
+
+.grid-item {
+    background-color: #d3eafd;
+    border: 1px solid rgba(0, 0, 0, 0.8);
+    padding: 5px;
+    font-size: 12px;
+    text-align: center;
+    position: relative;
+
+}
+
+.error{
+    border: 1px solid;
+    margin: 10px 0px;
+    padding: 15px 10px 15px 50px;
+    background-repeat: no-repeat;
+    background-position: 10px center;
+    color: #D8000C;
+    background-color: #FFBABA;
+    background-image: url('https://i.imgur.com/GnyDvKN.png');
+}
+
+div.dont-display{
+    display: none
+}
+
+h4 {
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+
+p {
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+</style>

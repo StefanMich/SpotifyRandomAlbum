@@ -16,7 +16,6 @@ from main import (
 )
 
 
-
 @dataclass
 class Album:
     id: str
@@ -70,7 +69,12 @@ def display_from_playlist(request, playlist_id):
     artist_name, other_albums, spotlight_album = prepare_from_playlist(
         playlist_id)
 
-    return render(request, 'display_albums.html', {
+    if request.htmx:
+        template = 'album_rotator.html'
+    else:
+        template = 'display_albums.html'
+
+    return render(request, template, {
         'spotlight_album': spotlight_album,
         'other_albums': other_albums,
         'artist': artist_name,
