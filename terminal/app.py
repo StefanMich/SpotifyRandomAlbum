@@ -2,9 +2,9 @@ import argparse
 import sys
 
 import spotipy
-from main import (
+from spotify_logic.artist import followed_artists
+from spotify_logic.album import (
     album_description,
-    followed_artists,
     get_album,
     get_random_album,
     queue_tracks,

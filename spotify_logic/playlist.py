@@ -1,6 +1,6 @@
 import random
 
-from main import spotify
+from spotify_logic.client import spotify
 
 
 def followed_playlists():

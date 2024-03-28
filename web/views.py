@@ -6,7 +6,7 @@ from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
 
 from exception_parser import SpotifyException
-from main import (
+from spotify_logic.album import (
     get_album,
     get_random_artist_album_list,
     get_saved_albums,
