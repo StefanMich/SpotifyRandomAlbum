@@ -141,4 +141,4 @@ def display_playlists(request):
         title=playlist['name'],
         album_art_url=playlist['images'][0]['url'],
     ) for playlist in playlists['items']]
-    return render(request, 'display_playlists.html', {'playlists': playlists})
+    return render(request, 'display_playlists.html', {'playlists': playlists, 'mode': 'playlist'})
