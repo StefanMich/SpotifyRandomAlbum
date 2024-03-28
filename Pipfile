@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 spotipy = "~=2.23"
 django = "==5.0.1"
+django-htmx = "*"
 
 [dev-packages]
 
