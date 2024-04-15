@@ -6,7 +6,7 @@ on:
       - opened
       - edited
       - synchronize
-    branches: [ "main" ]
+    branches: [ "master" ]
 jobs:
   build:
     runs-on: ubuntu-latest
