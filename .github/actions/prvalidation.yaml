@@ -1,0 +1,30 @@
+name: Pull Request Validation
+
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - synchronize
+    branches: [ "main" ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+    - name: Docker Login
+      uses: docker/login-action@v3.1.0
+      with:
+        # Username used to log against the Docker registry
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        # Password or personal access token used to log against the Docker registry
+        password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+    - uses: docker/build-push-action@v5
+      with:
+        file: Dockerfile.dev
+        context: .
+        push: false
+        tags: |
+          stefanmich/spotifyrandomalbum:${{github.run_number}}
