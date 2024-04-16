@@ -24,3 +24,4 @@ jobs:
         push: true
         tags: |
           stefanmich/spotifyrandomalbum:${{github.run_number}}
+          stefanmich/spotifyrandomalbum:latest
