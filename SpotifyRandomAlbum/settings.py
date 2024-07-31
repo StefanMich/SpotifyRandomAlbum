@@ -27,6 +27,7 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY','django-insecure--&-e_8r$*t7nj=lc*8py
 DEBUG = os.getenv('DJANGO_DEBUG','True') == 'True'
 
 ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS','').split(',')
+CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS','').split(',')
 CSRF_COOKIE_SECURE = True
 
 # Application definition
