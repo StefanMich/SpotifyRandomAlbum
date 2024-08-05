@@ -1,0 +1,6 @@
+services:
+  web:
+    environment:
+      - SPOTIPY_CLIENT_ID=7dc4a1139fd84086a3997062de67fa2a
+      - SPOTIPY_CLIENT_SECRET=c51293d84493476091d5327de83f99e4
+      - DJANGO_ALLOWED_HOSTS=127.0.0.1
