@@ -28,10 +28,13 @@ ENV PATH="/.venv/bin:$PATH"
 # Create and switch to a new user
 RUN useradd --create-home appuser
 WORKDIR /home/appuser
-USER appuser
+
 
 # Install application into container
 COPY . .
+RUN chown appuser:appuser /home/appuser/db.sqlite3
+
+USER appuser
 
 # Run the application
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
