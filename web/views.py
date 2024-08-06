@@ -144,3 +144,14 @@ def display_playlists(request):
         album_art_url=playlist['images'][0]['url'],
     ) for playlist in playlists['items']]
     return render(request, 'display_playlists.html', {'playlists': playlists, 'mode': 'playlist'})
+
+def callback(request):
+    token_callback(request)
+    return HttpResponseRedirect('/')
+
+def login(request):
+    try:
+        token = get_token(request)
+    except AttributeError as e:
+        return HttpResponseRedirect(e.args[0])
+    return HttpResponseRedirect('/')

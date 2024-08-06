@@ -1,9 +1,11 @@
 from django.urls import path
 
 from .views import (
+    callback,
     display_albums,
     display_from_playlist,
     display_playlists,
+    login,
     queue_album,
 )
 
@@ -17,4 +19,6 @@ urlpatterns = [
         name='display_playlist_albums'
     ),
     path('queue_album/<str:album_id>/', queue_album, name='queue_album'),
+    path('callback/', callback, name='callback'),
+    path('login/', login, name='login')
 ]
