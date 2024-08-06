@@ -1,26 +1,24 @@
 import random
 
-from spotify_logic.client import spotify
 
-
-def followed_playlists():
+def followed_playlists(client):
     playlist_list = []
-    playlists = spotify.current_user_playlists(limit=50)
+    playlists = client.current_user_playlists(limit=50)
     playlist_list.extend(playlists['items'])
     _next = playlists['next']
     while _next:
-        playlists = spotify.next(playlists)
+        playlists = client.next(playlists)
         playlist_list.extend(playlists['items'])
         _next = playlists
     return playlists
 
 
-def get_playlist(playlist_id):
-    return spotify.playlist(playlist_id)['tracks']['items']
+def get_playlist(client, playlist_id):
+    return client.playlist(playlist_id)['tracks']['items']
 
 
-def get_random_album_from_playlist(playlist_id) -> tuple[str, dict, list[dict]]:
-    items = get_playlist(playlist_id)
+def get_random_album_from_playlist(client, playlist_id) -> tuple[str, dict, list[dict]]:
+    items = get_playlist(client, playlist_id)
 
     albums = {
         item['track']['album']['id']: item['track']['album']

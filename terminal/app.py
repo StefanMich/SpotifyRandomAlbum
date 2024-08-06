@@ -57,13 +57,13 @@ class Main:
             queue_tracks(self.next_album)
         self.skip_album()
 
-    def get_next_album(self, artist_list):
+    def get_next_album(self, client, artist_list):
         if arguments.playlist:
             _, album, _ = get_random_album_from_playlist(arguments.playlist)
             album_id = album['id']
         else:
             album_id = get_random_album(artist_list)
-        self.next_album = get_album(album_id)
+        self.next_album = get_album(client, album_id)
         return self.next_album
 
     def skip_album(self):
@@ -74,8 +74,8 @@ class Main:
     def print_album(self):
         print(f'Next album: {album_description(self.next_album)}')
 
-    def next_album_from_artist(self):
-        self.get_next_album([self.next_album_artist])
+    def next_album_from_artist(self, client):
+        self.get_next_album(client, [self.next_album_artist])
         self.print_album()
 
     def queue_now(self):

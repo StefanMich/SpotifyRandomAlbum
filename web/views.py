@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from enum import Enum
 import random
 
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
 
@@ -11,6 +12,11 @@ from spotify_logic.album import (
     get_random_artist_album_list,
     get_saved_albums,
     queue_tracks,
+)
+from spotify_logic.client import (
+    spotify,
+    get_token,
+    token_callback,
 )
 from spotify_logic.playlist import (
     followed_playlists,
@@ -44,7 +50,11 @@ class Album:
 
 @require_http_methods(['GET'])
 def display_albums(request):
-    artist_name, other_albums, spotlight_album = prepare_albums()
+    try:
+        client = spotify(request)
+    except AttributeError as e:
+        return HttpResponseRedirect(e.args[0])
+    artist_name, other_albums, spotlight_album = prepare_albums(client)
 
     return render(request, 'display_albums.html', {
         'spotlight_album': spotlight_album,
@@ -54,9 +64,9 @@ def display_albums(request):
     })
 
 
-def prepare_albums(unused=None):
-    artist, albums = get_random_artist_album_list()
-    saved = get_saved_albums(albums)
+def prepare_albums(client, unused=None):
+    artist, albums = get_random_artist_album_list(client)
+    saved = get_saved_albums(client, albums)
     weights = [3 if is_saved else 1 for is_saved in saved]
 
     view_albums = Album.from_album_list(albums)
@@ -107,17 +117,18 @@ class Mode(Enum):
 
 @require_http_methods(['POST'])
 def queue_album(request, album_id):
+    client = spotify(request)
     mode = request.POST.get('mode')
     playlist_id = request.POST.get('playlist_id', None)
-    album = get_album(album_id)
+    album = get_album(client, album_id)
     error = None
     try:
-        queue_tracks(album)
+        queue_tracks(client, album)
     except SpotifyException as e:
         error = e.args[0]
     mode_func = Mode(mode).func
 
-    artist_name, other_albums, spotlight_album = mode_func(playlist_id)
+    artist_name, other_albums, spotlight_album = mode_func(client, playlist_id)
 
     return render(request, 'album_rotator.html', {
         'spotlight_album': spotlight_album,

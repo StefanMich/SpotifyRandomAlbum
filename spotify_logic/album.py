@@ -8,30 +8,30 @@ from spotify_logic.client import (
 from spotify_logic.artist import followed_artists
 
 
-def get_album(album_id):
-    return spotify.album(album_id)
+def get_album(client, album_id):
+    return client.album(album_id)
 
 
-def get_random_album(artists):
+def get_random_album(client, artists):
     while True:
         picked_artist = random.choice(artists)
-        albums = spotify.artist_albums(
+        albums = client.artist_albums(
             picked_artist['id'], album_type='album')
         if albums['items']:
             break
     return random.choice(albums['items'])['id']
 
 
-def get_random_artist_album_list():
-    artist_list = followed_artists()
+def get_random_artist_album_list(client):
+    artist_list = followed_artists(client)
     picked_artist = random.choice(artist_list)
-    albums = spotify.artist_albums(
+    albums = client.artist_albums(
         picked_artist['id'], album_type='album')['items']
     return picked_artist, albums
 
 
-def get_saved_albums(albums):
-    saved = spotify.current_user_saved_albums_contains(
+def get_saved_albums(client, albums):
+    saved = client.current_user_saved_albums_contains(
         [album['id'] for album in albums])
     return saved
 
@@ -42,11 +42,11 @@ def album_description(album):
     return f"'{name}' by '{album}'"
 
 
-def queue_tracks(album):
+def queue_tracks(client, album):
     print(f'Queueing {album_description(album)}\n')
     for track in album['tracks']['items']:
         try:
-            spotify.add_to_queue(track['uri'])
+            client.add_to_queue(track['uri'])
         except Exception as e:
             raise parse_exception(e)
         sleep(1)  # without this, tracks might be queued in wrong order.
