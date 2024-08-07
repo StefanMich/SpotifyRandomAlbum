@@ -23,7 +23,7 @@ jobs:
         # Password or personal access token used to log against the Docker registry
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-    - uses: docker/build-push-action@v5
+    - uses: docker/build-push-action@v6
       with:
         file: Dockerfile.dev
         context: .
