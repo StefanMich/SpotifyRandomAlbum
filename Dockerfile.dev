@@ -32,7 +32,6 @@ WORKDIR /home/appuser
 
 # Install application into container
 COPY . .
-RUN chown appuser:appuser /home/appuser/db.sqlite3
 
 USER appuser
 
