@@ -78,8 +78,9 @@ def prepare_albums(client, unused=None):
 
 @require_http_methods(['GET'])
 def display_from_playlist(request, playlist_id):
+    client = spotify(request)
     artist_name, other_albums, spotlight_album = prepare_from_playlist(
-        playlist_id)
+        client, playlist_id)
 
     if request.htmx:
         template = 'album_rotator.html'
@@ -95,8 +96,8 @@ def display_from_playlist(request, playlist_id):
     })
 
 
-def prepare_from_playlist(playlist_id):
-    artist_name, album, other = get_random_album_from_playlist(playlist_id)
+def prepare_from_playlist(client, playlist_id):
+    artist_name, album, other = get_random_album_from_playlist(client, playlist_id)
     return artist_name, Album.from_album_list(other), Album.from_spotify_album(album)
 
 
@@ -148,7 +149,8 @@ class Playlist:
 
 
 def display_playlists(request):
-    playlists = followed_playlists()
+    client = spotify(request)
+    playlists = followed_playlists(client)
     playlists = [Playlist(
         id=playlist['id'],
         title=playlist['name'],
@@ -162,7 +164,7 @@ def callback(request):
 
 def login(request):
     try:
-        token = get_token(request)
+        get_token(request)
     except AttributeError as e:
         return HttpResponseRedirect(e.args[0])
     return HttpResponseRedirect('/')
