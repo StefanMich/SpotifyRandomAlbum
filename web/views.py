@@ -5,6 +5,7 @@ import random
 
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.templatetags.static import static
 from django.views.decorators.http import require_http_methods
 
 from exception_parser import SpotifyException
@@ -26,6 +27,13 @@ from spotify_logic.playlist import (
 
 logger = logging.getLogger(__name__)
 
+def get_cover_art_url(album):
+    try:
+        url = album['images'][0]['url']
+    except IndexError:
+        url = static('/web/no_cover_art.jpg')
+    return url
+
 @dataclass
 class Album:
     id: str
@@ -35,11 +43,12 @@ class Album:
 
     @staticmethod
     def from_spotify_album(album):
+        url = get_cover_art_url(album)
         return Album(
             id=album['id'],
             artist=album['artists'][0]['name'],
             title=album['name'],
-            album_art_url=album['images'][0]['url']
+            album_art_url=url
         )
 
     @staticmethod
@@ -160,7 +169,7 @@ def display_playlists(request):
     playlists = [Playlist(
         id=playlist['id'],
         title=playlist['name'],
-        album_art_url=playlist['images'][0]['url'],
+        album_art_url=get_cover_art_url(playlist),
     ) for playlist in playlists['items']]
     return render(request, 'display_playlists.html', {'playlists': playlists, 'mode': 'playlist'})
 
