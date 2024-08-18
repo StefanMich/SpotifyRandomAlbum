@@ -68,6 +68,9 @@ def display_albums(request):
 
 def prepare_albums(client, unused=None):
     artist, albums = get_random_artist_album_list(client)
+    if not albums:
+        logger.debug(f'No albums found for artist: {artist["name"]} {artist["id"]}')
+        return prepare_albums(client)
     logger.debug(f'Preparing artist: {artist["name"]} {artist["id"]}')
     saved = get_saved_albums(client, albums)
     weights = [3 if is_saved else 1 for is_saved in saved]
