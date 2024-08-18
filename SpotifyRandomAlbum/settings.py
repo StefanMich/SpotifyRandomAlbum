@@ -140,8 +140,18 @@ LOGGING = {
     'loggers': {
         'spotipy.oauth2': {
             'handlers': ['console'],
-            'level': 'DEBUG',
-            'propagate': False,
+            'level': 'ERROR',
+            'propagate': True,
         },
-    },
+        'spotipy.client': {
+            'handlers': ['console'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+        'web': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    }
 }

@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum
+import logging
 import random
 
 from django.http import HttpResponseRedirect
@@ -23,6 +24,7 @@ from spotify_logic.playlist import (
     get_random_album_from_playlist,
 )
 
+logger = logging.getLogger(__name__)
 
 @dataclass
 class Album:
@@ -66,6 +68,7 @@ def display_albums(request):
 
 def prepare_albums(client, unused=None):
     artist, albums = get_random_artist_album_list(client)
+    logger.debug(f'Preparing artist: {artist["name"]} {artist["id"]}')
     saved = get_saved_albums(client, albums)
     weights = [3 if is_saved else 1 for is_saved in saved]
 
