@@ -6,6 +6,7 @@ from .views import (
     display_from_playlist,
     display_playlists,
     login,
+    logout,
     queue_album,
 )
 
@@ -20,5 +21,6 @@ urlpatterns = [
     ),
     path('queue_album/<str:album_id>/', queue_album, name='queue_album'),
     path('callback/', callback, name='callback'),
-    path('login/', login, name='login')
+    path('login/', login, name='login'),
+    path('logout/', logout, name='logout')
 ]

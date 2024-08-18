@@ -9,6 +9,7 @@
   <div class="topnav">
   <a class="{% if mode == 'album' %} active {% endif %}" href="{% url 'display_albums' %}">Albums</a>
   <a class="{% if mode == 'playlist' %} active {% endif %}" href="{% url 'display_playlists' %}">Playlists</a>
+  <a href="{% url 'logout' %}">Logout</a>
   </div>
 
     {% block main %}{% endblock %}

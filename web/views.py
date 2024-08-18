@@ -19,6 +19,7 @@ from spotify_logic.client import (
     spotify,
     get_token,
     token_callback,
+    logout as client_logout,
 )
 from spotify_logic.playlist import (
     followed_playlists,
@@ -164,7 +165,10 @@ class Playlist:
 
 
 def display_playlists(request):
-    client = spotify(request)
+    try:
+        client = spotify(request)
+    except AttributeError as e:
+        return HttpResponseRedirect(e.args[0])
     playlists = followed_playlists(client)
     playlists = [Playlist(
         id=playlist['id'],
@@ -183,3 +187,7 @@ def login(request):
     except AttributeError as e:
         return HttpResponseRedirect(e.args[0])
     return HttpResponseRedirect('/')
+
+def logout(request):
+    client_logout(request)
+    return HttpResponseRedirect('/login')
