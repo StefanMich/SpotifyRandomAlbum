@@ -1,20 +1,30 @@
 {% load static %}
 <div id="albums"
+  class="album-rotator"
   hx-target="#albums"
   hx-swap="outerHTML">
 
-<div id="error" class="error {% if not error %} dont-display {% endif %}  if error " >
+{% if error %}
+<div id="error" class="error">
     {{ error }}
 </div>
-<h1 style="text-align: center">{{ artist }}</h1>
-
-<div class="grid-container">
-    {% include "album_fragment.html" with album=spotlight_album dimension=300%}
+{% endif %}
+<div class="spotlight-album">
+    <div class="album-item">
+        <h1>{{ spotlight_album.title }}</h1>
+        <p>
+            <img src="{{ spotlight_album.album_art_url }}" alt="{{spotlight_album.title}} cover art" class="spotlight-album-art">
+        </p>
+        <button hx-post="{% url 'queue_album' spotlight_album.id %}" hx-vals='{"mode": "{{ mode }}", "playlist_id": "{{ playlist_id }}"}' title="Queue album">
+            <img class="button-icon" src="{% static 'web/queue.svg' %}" alt="Queue album icon">
+            <img class="htmx-indicator" src="{% static 'web/bars.svg' %}" alt="Queuing">
+        </button>
+    </div>
 </div>
 
-<div id="album_list" class="grid-container">
+<div id="album_list" class="album-grid">
   {% for album in other_albums %}
-        {% include "album_fragment.html" with album=album dimension=200 %}
+        {% include "album_fragment.html" with album=album %}
   {% endfor %}
 </div>
 
@@ -22,48 +32,3 @@
 
 {#<button hx-post="{% url 'random_artist' %}">Random Artist</button>#}
 </div>
-
-<style>
-.grid-container {
-  display: grid;
-  grid-template-columns: auto auto auto auto auto auto auto;
-  padding: 10px;
-  margin: auto;
-  max-width: fit-content;
-}
-
-.grid-item {
-    background-color: #d3eafd;
-    border: 1px solid rgba(0, 0, 0, 0.8);
-    padding: 5px;
-    font-size: 12px;
-    text-align: center;
-    position: relative;
-
-}
-
-.error{
-    border: 1px solid;
-    margin: 10px 0px;
-    padding: 15px 10px 15px 50px;
-    background-repeat: no-repeat;
-    background-position: 10px center;
-    color: #D8000C;
-    background-color: #FFBABA;
-    background-image: url('https://i.imgur.com/GnyDvKN.png');
-}
-
-div.dont-display{
-    display: none
-}
-
-h4 {
-    margin-top: 4px;
-    margin-bottom: 4px;
-}
-
-p {
-    margin-top: 4px;
-    margin-bottom: 4px;
-}
-</style>

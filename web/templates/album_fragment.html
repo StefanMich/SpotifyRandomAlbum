@@ -1,13 +1,12 @@
 {% load static %}
-<div class="grid-item" >
+<div class="album-item" >
         <h3>{{ album.title }} </h3>
+        <p>{{ album.artist }}</p>
         <p>
-            <img src="{{ album.album_art_url }}" alt="{{album.title}} cover art" width={{ dimension }} height={{ dimension }} style="padding:10px">
+            <img src="{{ album.album_art_url }}" alt="{{album.title}} cover art">
         </p>
-        <a>
-            <button hx-post="{% url 'queue_album' album.id %}" hx-vals='{"mode": "{{ mode }}", "playlist_id": "{{ playlist_id }}"}'>
-                Queue album
-                <img id="#spinner" class="htmx-indicator" src="{% static 'web/bars.svg' %}" alt="Queuing">
-            </button>
-        </a>
+        <button hx-post="{% url 'queue_album' album.id %}" hx-vals='{"mode": "{{ mode }}", "playlist_id": "{{ playlist_id }}"}' title="Queue album">
+            <img class="button-icon" src="{% static 'web/queue.svg' %}" alt="Queue album icon">
+            <img class="htmx-indicator" src="{% static 'web/bars.svg' %}" alt="Queuing">
+        </button>
 </div>

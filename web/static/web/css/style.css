@@ -1,0 +1,203 @@
+/* General Body Styles */
+body {
+    background-color: #121212;
+    color: #e0e0e0;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    margin: 0;
+}
+
+/* Top Navigation Bar */
+.topnav {
+    background-color: #1f1f1f;
+    padding: 0 40px;
+    border-bottom: 1px solid #282828;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 64px;
+}
+
+.topnav .logo a {
+    color: #ffffff;
+    font-size: 24px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.topnav .nav-links a {
+    color: #b3b3b3;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 22px 20px;
+    transition: color 0.3s;
+}
+
+.topnav .nav-links a:hover {
+    color: #ffffff;
+    transition: color 0.3s;
+}
+
+.topnav .nav-links a.active {
+    color: #1db954;
+}
+
+/* Main Content Area */
+.main-content {
+    padding: 20px;
+}
+
+/* Album Display */
+.album-rotator, .playlist-rotator {
+    text-align: center;
+}
+
+.spotlight-album, .spotlight-playlist {
+    margin-bottom: 40px;
+    padding: 20px;
+    background-color: #181818;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.spotlight-album .album-item {
+    background-color: transparent;
+}
+
+.spotlight-album .album-item img {
+    max-width: 350px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+}
+
+.spotlight-album img, .spotlight-playlist img {
+    max-width: 300px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.album-grid, .playlist-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.album-item, .playlist-item {
+    background-color: #181818;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    transition: background-color 0.3s;
+}
+
+.album-item:hover, .playlist-item:hover {
+    background-color: #282828;
+}
+
+.album-item img, .playlist-item img {
+    width: 100%;
+    border-radius: 4px;
+}
+
+.album-item h3, .playlist-item h3 {
+    font-size: 16px;
+    margin: 10px 0 5px;
+    min-height: 40px;
+}
+
+.album-item p, .playlist-item p {
+    font-size: 14px;
+    color: #b3b3b3;
+    margin: 0;
+}
+
+/* Buttons (for both <button> and link elements with .button-link) */
+button, .button-link {
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: #1db954; /* Spotify Green */
+    border: none;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 10px;
+    position: relative;
+}
+
+/* --- Styles for Icon Buttons --- */
+button:has(.button-icon), .button-link {
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    padding: 0;
+}
+
+button:hover, .button-link:hover {
+    background-color: #1ed760;
+}
+
+.button-text,
+.button-icon {
+    transition: opacity 0.2s ease-in-out;
+}
+
+.button-icon {
+    height: 24px;
+    width: 24px;
+}
+
+.htmx-indicator{
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+}
+
+/* --- Animation State --- */
+button.htmx-request .button-text,
+button.htmx-request .button-icon {
+    opacity: 0;
+}
+
+button.htmx-request .htmx-indicator {
+    opacity: 1;
+}
+
+button .htmx-indicator {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 1.5em;
+    z-index: 2;
+}
+
+/* --- Link that looks like button needs inline-block for size --- */
+.button-link {
+    display: inline-block;
+}
+
+.button-link .button-icon {
+    height: 24px;
+    width: 24px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Artist Header */
+.artist-header {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/* Footer */
+.footer {
+    text-align: center;
+    padding: 20px;
+    margin-top: 40px;
+}
+
+.footer img {
+    width: 100px;
+}

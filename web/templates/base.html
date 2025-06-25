@@ -3,51 +3,31 @@
   <head>
       <title>Spotify Random Album Selector</title>
       <link rel="shortcut icon" href="{%  static 'web/favicon.png' %}">
+      <link rel="stylesheet" href="{% static 'web/css/style.css' %}">
   </head>
-  <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' style="margin-top: 0px">
+  <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
 
   <div class="topnav">
-  <a class="{% if mode == 'album' %} active {% endif %}" href="{% url 'display_albums' %}">Albums</a>
-  <a class="{% if mode == 'playlist' %} active {% endif %}" href="{% url 'display_playlists' %}">Playlists</a>
-  <a href="{% url 'logout' %}">Logout</a>
+      <div class="logo">
+          <a href="{% url 'display_albums' %}">Spotify Random Album</a>
+      </div>
+      <div class="nav-links">
+          <a class="{% if mode == 'album' %} active {% endif %}" href="{% url 'display_albums' %}">Albums</a>
+          <a class="{% if mode == 'playlist' %} active {% endif %}" href="{% url 'display_playlists' %}">Playlists</a>
+          <a href="{% url 'logout' %}">Logout</a>
+      </div>
   </div>
 
+  <div class="main-content">
     {% block main %}{% endblock %}
+  </div>
+
     <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/htmx.org@1.9.11/dist/ext/debug.js"></script>
 
-  <img src="{% static 'web/spotify_logos/01_RGB/02_PNG/Spotify_Logo_RGB_Green.png' %}" alt="spotify_logo" width="100">
+  <div class="footer">
+    <img src="{% static 'web/spotify_logos/01_RGB/02_PNG/Spotify_Logo_RGB_Green.png' %}" alt="spotify_logo">
+  </div>
   </body>
 
-<style>
-.topnav {
-    text-align: center;
-    background-color: #d3eafd;
-    padding:10px;
-    overflow: hidden;
-}
-
-/* Style the links inside the navigation bar */
-.topnav a {
-  color: black;
-  text-align: center;
-  padding: 10px;
-  text-decoration: none;
-  font-size: 17px;
-    margin: auto;
-}
-
-/* Change the color of links on hover */
-.topnav a:hover {
-  background-color: #D3FDFB;
-  color: black;
-}
-
-/* Add a color to the active/current link */
-.topnav a.active {
-  background-color: #A2D3FB;
-  color: black;
-}
-
-</style>
 </html>

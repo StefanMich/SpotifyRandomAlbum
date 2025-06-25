@@ -4,7 +4,7 @@ import logging
 import random
 
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.templatetags.static import static
 from django.views.decorators.http import require_http_methods
 
@@ -35,29 +35,29 @@ def get_cover_art_url(album):
         url = static('/web/no_cover_art.jpg')
     return url
 
-@dataclass
 class Album:
-    id: str
-    artist: str
-    title: str
-    album_art_url: str
+    def __init__(self, item_json):
+        # item_json can be an album object or a playlist track object which contains a track object
+        is_track_object = 'track' in item_json and item_json['track'] is not None
 
-    @staticmethod
-    def from_spotify_album(album):
-        url = get_cover_art_url(album)
-        return Album(
-            id=album['id'],
-            artist=album['artists'][0]['name'],
-            title=album['name'],
-            album_art_url=url
-        )
+        if is_track_object:
+            track_data = item_json['track']
+            album_data = track_data.get('album', {})
+            self.title = album_data.get('name', 'Unknown Album')
+            self.id = album_data.get('id')
+            artists = track_data.get('artists', [])
+            self.artist = artists[0]['name'] if artists else 'Unknown Artist'
+            images = album_data.get('images', [])
+        else:  # it's an album object
+            self.title = item_json.get('name', 'Unknown Album')
+            self.id = item_json.get('id')
+            artists = item_json.get('artists', [])
+            self.artist = artists[0]['name'] if artists else 'Unknown Artist'
+            images = item_json.get('images', [])
 
-    @staticmethod
-    def from_album_list(album_list):
-        view_albums = []
-        for album in album_list:
-            view_albums.append(Album.from_spotify_album(album))
-        return view_albums
+        self.album_art_url = 'web/no_cover_art.jpg'
+        if images:
+            self.album_art_url = images[0]['url']
 
 
 @require_http_methods(['GET'])
@@ -85,14 +85,14 @@ def prepare_albums(client, unused=None):
     saved = get_saved_albums(client, albums)
     weights = [3 if is_saved else 1 for is_saved in saved]
 
-    view_albums = Album.from_album_list(albums)
+    view_albums = [Album(album) for album in albums]
     spotlight_album = random.choices(view_albums, weights=weights)[0]
     other_albums = [album for album in view_albums if album.id != spotlight_album.id]
     artist_name = artist['name']
     return artist_name, other_albums, spotlight_album
 
 
-@require_http_methods(['GET'])
+@require_http_methods(['GET', 'POST'])
 def display_from_playlist(request, playlist_id):
     client = spotify(request)
     artist_name, other_albums, spotlight_album = prepare_from_playlist(
@@ -114,7 +114,7 @@ def display_from_playlist(request, playlist_id):
 
 def prepare_from_playlist(client, playlist_id):
     artist_name, album, other = get_random_album_from_playlist(client, playlist_id)
-    return artist_name, Album.from_album_list(other), Album.from_spotify_album(album)
+    return artist_name, [Album(item) for item in other], Album(album)
 
 
 class Mode(Enum):
@@ -157,11 +157,11 @@ def queue_album(request, album_id):
     })
 
 
-@dataclass
 class Playlist:
-    id: str
-    title: str
-    album_art_url: str
+    def __init__(self, playlist_json):
+        self.id = playlist_json['id']
+        self.title = playlist_json['name']
+        self.album_art_url = get_cover_art_url(playlist_json)
 
 
 def display_playlists(request):
@@ -170,11 +170,7 @@ def display_playlists(request):
     except AttributeError as e:
         return HttpResponseRedirect(e.args[0])
     playlists = followed_playlists(client)
-    playlists = [Playlist(
-        id=playlist['id'],
-        title=playlist['name'],
-        album_art_url=get_cover_art_url(playlist),
-    ) for playlist in playlists['items']]
+    playlists = [Playlist(playlist) for playlist in playlists['items']]
     return render(request, 'display_playlists.html', {'playlists': playlists, 'mode': 'playlist'})
 
 def callback(request):

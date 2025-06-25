@@ -1,11 +1,10 @@
 {% load static %}
-<div class="grid-item" id="t">
+<div class="playlist-item">
         <h3>{{ playlist.title }} </h3>
         <p>
-            <img src="{{ playlist.album_art_url }}" alt="{{playlist.title}} cover art" width=200 height=200 style="padding:10px">
+            <img src="{{ playlist.album_art_url }}" alt="{{playlist.title}} cover art">
         </p>
-        <button hx-get="{% url 'display_playlist_albums' playlist.id %}" hx-push-url="true">
-            Random album from playlist
-
-        </button>
+        <a href="{% url 'display_playlist_albums' playlist.id %}" title="Open playlist albums" class="button-link">
+            <img class="button-icon" src="{% static 'web/queue.svg' %}" alt="Open playlist albums icon">
+        </a>
 </div>
