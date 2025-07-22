@@ -47,18 +47,13 @@ class Album:
             self.id = album_data.get('id')
             artists = track_data.get('artists', [])
             self.artist = artists[0]['name'] if artists else 'Unknown Artist'
-            images = album_data.get('images', [])
         else:  # it's an album object
             self.title = item_json.get('name', 'Unknown Album')
             self.id = item_json.get('id')
             artists = item_json.get('artists', [])
             self.artist = artists[0]['name'] if artists else 'Unknown Artist'
-            images = item_json.get('images', [])
 
-        self.album_art_url = 'web/no_cover_art.jpg'
-        if images:
-            self.album_art_url = images[0]['url']
-
+        self.album_art_url = get_cover_art_url(item_json)
 
 @require_http_methods(['GET'])
 def display_albums(request):
