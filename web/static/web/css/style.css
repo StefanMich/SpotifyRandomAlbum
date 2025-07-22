@@ -64,7 +64,7 @@ body {
     background-color: transparent;
 }
 
-.spotlight-album .album-item img {
+.spotlight-album .album-item img.spotlight-album-art {
     max-width: 350px;
     box-shadow: 0 8px 24px rgba(0,0,0,0.5);
 }
@@ -130,6 +130,10 @@ button:has(.button-icon), .button-link {
     width: 48px;
     height: 48px;
     padding: 0;
+    box-shadow: none;
+    filter: none;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
 }
 
 button:hover, .button-link:hover {
@@ -144,6 +148,12 @@ button:hover, .button-link:hover {
 .button-icon {
     height: 24px;
     width: 24px;
+    box-shadow: none;
+    filter: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .htmx-indicator{
