@@ -2,7 +2,9 @@ services:
   web:
     build:
         context: .
-        dockerfile: Dockerfile.dev
+        dockerfile: Dockerfile
+        args:
+          - ENV=dev
     container_name: web
     stop_signal: SIGINT
     ports:
@@ -25,7 +27,9 @@ services:
   terminal:
     build:
         context: .
-        dockerfile: Dockerfile.dev
+        dockerfile: Dockerfile
+        args:
+          - ENV=dev
     container_name: terminal
     stop_signal: SIGINT
     stdin_open: true # docker run -i
