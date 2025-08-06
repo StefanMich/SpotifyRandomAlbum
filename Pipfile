@@ -5,7 +5,7 @@ name = "pypi"
 
 [packages]
 spotipy = "~=2.23"
-django = "==5.0.4"
+django = "==5.2.5"
 django-htmx = "*"
 gunicorn = "*"
 
