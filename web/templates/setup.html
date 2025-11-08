@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block main %}
+<div class="setup-dialog">
+    <h1>Setup</h1>
+    <form method="post" action="{% url 'setup' %}">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="lastfm_username">Last.fm Username:</label>
+            <input
+                type="text"
+                id="lastfm_username"
+                name="lastfm_username"
+                value="{{ current_username }}"
+                placeholder="Enter your Last.fm username"
+            >
+        </div>
+        <div class="form-actions">
+            <button type="submit">Save</button>
+            <a href="{% url 'display_albums' %}" class="button-link">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
