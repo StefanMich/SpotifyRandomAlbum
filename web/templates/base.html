@@ -14,6 +14,7 @@
       <div class="nav-links">
           <a class="{% if mode == 'album' %} active {% endif %}" href="{% url 'display_albums' %}">Albums</a>
           <a class="{% if mode == 'playlist' %} active {% endif %}" href="{% url 'display_playlists' %}">Playlists</a>
+          <a class="{% if mode == 'setup' %} active {% endif %}" href="{% url 'setup' %}">Setup</a>
           <a href="{% url 'logout' %}">Logout</a>
       </div>
   </div>

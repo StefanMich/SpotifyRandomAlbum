@@ -8,6 +8,7 @@ from .views import (
     login,
     logout,
     queue_album,
+    setup,
 )
 
 urlpatterns = [
@@ -22,5 +23,6 @@ urlpatterns = [
     path('queue_album/<str:album_id>/', queue_album, name='queue_album'),
     path('callback/', callback, name='callback'),
     path('login/', login, name='login'),
-    path('logout/', logout, name='logout')
+    path('logout/', logout, name='logout'),
+    path('setup/', setup, name='setup'),
 ]
