@@ -112,7 +112,7 @@ Navigate to http://localhost:8000/admin/ when running web mode
 
 ## Container Architecture
 
-- **Base Image**: python:3.11-slim
+- **Base Image**: python:3.12-slim
 - **Multi-stage build**: Separate stages for dependencies and runtime
 - **Non-root execution**: Runs as `appuser` for security
 - **Volume mounting**: Code is mounted for development
