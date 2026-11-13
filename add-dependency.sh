@@ -16,7 +16,7 @@ echo "🔍 Adding dependency: $PACKAGE_NAME $VERSION"
 
 # Run in a Docker container
 echo "Creating Docker container to update dependencies..."
-docker run --rm -v $(pwd):/app -w /app python:3.12-slim bash -c "pip install pipenv && if [ -z \"$VERSION\" ]; then pipenv install $PACKAGE_NAME; else pipenv install $PACKAGE_NAME==$VERSION; fi"
+docker run --rm -v $(pwd):/app -w /app python:3.13-slim bash -c "pip install pipenv && if [ -z \"$VERSION\" ]; then pipenv install $PACKAGE_NAME; else pipenv install $PACKAGE_NAME==$VERSION; fi"
 
 echo "Dependency added successfully!"
 echo "Remember to rebuild your Docker image with: docker-compose build"
