@@ -3,12 +3,37 @@ name: Release
 on:
   push:
     branches: [ "master" ]
+
+permissions:
+  contents: write
+  pull-requests: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6
+
+    - name: Resolve release version
+      id: version
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        set -euo pipefail
+        latest="$(gh release list --limit 1 --json tagName \
+          --jq '.[0].tagName // "v0.0.0"')"
+        IFS=. read -r major minor patch <<< "${latest#v}"
+        pulls="repos/$GITHUB_REPOSITORY/commits/$GITHUB_SHA/pulls"
+        labels="$(gh api "$pulls" --jq '.[].labels[].name')"
+        title="$(gh api "$pulls" --jq '.[0].title // empty')"
+        case "$labels" in
+          *"release: major"*) version="$((major + 1)).0.0" ;;
+          *"release: minor"*) version="$major.$((minor + 1)).0" ;;
+          *) version="$major.$minor.$((patch + 1))" ;;
+        esac
+        echo "version=$version" >> "$GITHUB_OUTPUT"
+        echo "notes=${title:-$(git log -1 --format=%s)}" >> "$GITHUB_OUTPUT"
 
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v4
@@ -30,5 +55,12 @@ jobs:
         platforms: linux/amd64,linux/arm64
         push: true
         tags: |
-          stefanmich/spotifyrandomalbum:${{github.run_number}}
+          stefanmich/spotifyrandomalbum:${{ steps.version.outputs.version }}
           stefanmich/spotifyrandomalbum:latest
+
+    - name: Publish GitHub release
+      env:
+        GH_TOKEN: ${{ github.token }}
+        VERSION: ${{ steps.version.outputs.version }}
+        NOTES: ${{ steps.version.outputs.notes }}
+      run: gh release create "v$VERSION" --target "$GITHUB_SHA" --notes "$NOTES"
