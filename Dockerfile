@@ -42,9 +42,13 @@ RUN chmod +x entrypoint.sh entrypoint.prod.sh
 # Copy the rest of the application code
 COPY . .
 
-# Create a non-root user and give ownership of /app
-RUN useradd --create-home appuser
-RUN chown -R appuser:appuser /app
+# Create a non-root user and give ownership of /app and /data
+RUN groupadd --gid 1000 appuser \
+    && useradd --create-home --uid 1000 --gid 1000 appuser \
+    && mkdir -p /data \
+    && chown -R appuser:appuser /app /data
+
+VOLUME /data
 
 # Switch to non-root user
 USER appuser
