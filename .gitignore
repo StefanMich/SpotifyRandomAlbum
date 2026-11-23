@@ -11,3 +11,4 @@ syntax: glob
 db.sqlite3
 compose-override.yml
 /static/
+.venv/

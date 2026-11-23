@@ -13,15 +13,20 @@ ENV ENV=${ENV}
 
 FROM base AS python-deps
 
-# Install pipenv and compilation dependencies
-RUN pip install pipenv
-RUN apt-get update && apt-get install -y --no-install-recommends gcc
+COPY --from=ghcr.io/astral-sh/uv:0.13.9 /uv /uvx /bin/
 
-# Install python dependencies in /.venv
-COPY Pipfile .
-COPY Pipfile.lock .
-RUN PIPENV_VENV_IN_PROJECT=1 pipenv install --deploy
+ENV UV_COMPILE_BYTECODE=1
+ENV UV_LINK_MODE=copy
+ENV UV_PROJECT_ENVIRONMENT=/.venv
+ENV UV_PYTHON_DOWNLOADS=never
 
+WORKDIR /app
+
+# Install dependencies from the lockfile before copying the app
+RUN --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=bind,source=uv.lock,target=uv.lock \
+    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
+    uv sync --frozen --no-dev --no-install-project
 
 FROM base AS runtime
 
