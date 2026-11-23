@@ -63,4 +63,6 @@ jobs:
         GH_TOKEN: ${{ github.token }}
         VERSION: ${{ steps.version.outputs.version }}
         NOTES: ${{ steps.version.outputs.notes }}
-      run: gh release create "v$VERSION" --target "$GITHUB_SHA" --notes "$NOTES"
+      run: >
+        gh release create "v$VERSION" --target "$GITHUB_SHA"
+        --title "$NOTES" --notes "$NOTES"
