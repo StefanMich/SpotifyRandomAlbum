@@ -57,7 +57,7 @@ docker compose up terminal
 
 ### Development Workflow
 
-**Add new Python dependencies:**
+**Add new Python dependencies** (uv, locked in `uv.lock`):
 ```bash
 ./add-dependency.sh PACKAGE_NAME [VERSION]
 # Example: ./add-dependency.sh requests "~=2.28.0"
@@ -113,6 +113,7 @@ Navigate to http://localhost:8000/admin/ when running web mode
 ## Container Architecture
 
 - **Base Image**: python:3.15-slim
+- **Dependencies**: installed with uv from `pyproject.toml` and `uv.lock`
 - **Multi-stage build**: Separate stages for dependencies and runtime
 - **Non-root execution**: Runs as `appuser` for security
 - **Volume mounting**: Code is mounted for development
