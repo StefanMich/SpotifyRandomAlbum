@@ -21,23 +21,7 @@ jobs:
 
     - name: Resolve release version
       id: version
-      env:
-        GH_TOKEN: ${{ github.token }}
-      run: |
-        set -euo pipefail
-        latest="$(gh release list --limit 1 --json tagName \
-          --jq '.[0].tagName // "v0.0.0"')"
-        IFS=. read -r major minor patch <<< "${latest#v}"
-        pulls="repos/$GITHUB_REPOSITORY/commits/$GITHUB_SHA/pulls"
-        labels="$(gh api "$pulls" --jq '.[].labels[].name')"
-        title="$(gh api "$pulls" --jq '.[0].title // empty')"
-        case "$labels" in
-          *"release: major"*) version="$((major + 1)).0.0" ;;
-          *"release: minor"*) version="$major.$((minor + 1)).0" ;;
-          *) version="$major.$minor.$((patch + 1))" ;;
-        esac
-        echo "version=$version" >> "$GITHUB_OUTPUT"
-        echo "notes=${title:-$(git log -1 --format=%s)}" >> "$GITHUB_OUTPUT"
+      uses: StefanMich/github-actions/resolve-version@v1
 
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v4
